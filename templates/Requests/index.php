@@ -24,7 +24,12 @@
                 <tr>
                     <td><?= $this->Number->format($request->id) ?></td>
                     <td><?= $request->hasValue('user') ? $this->Html->link($request->user->name, ['controller' => 'Users', 'action' => 'view', $request->user->id]) : '' ?></td>
-                    <td><?= h($request->state) ?></td>
+                    <td><?php if(h($request->state)){
+                        echo '<span style="color:lime;"> Validée ! </span>';
+                    }
+                    else{
+                        echo '<span style="color:red;"> En attente </span>';
+                    } ?></td>
                     <td><?= h($request->created) ?></td>
                     <td><?= h($request->modified) ?></td>
                     <td class="actions">

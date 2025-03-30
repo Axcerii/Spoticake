@@ -28,16 +28,16 @@
                 </tr>
                 <tr>
                     <th><?= __('Artiste') ?></th>
-                    <td><?= $album->hasValue('artiste') ? $this->Html->link($request->artist->name, ['controller' => 'Artists', 'action' => 'view', $album->artist->id]) : '' ?></td>
+                    <td> <?= h($album->artist->name) ?> </td>
                 </tr>
                 <tr>
                     <th><?= __('Image') ?></th>
-                    <td><?= $album->hasValue('image') ? $this->Html->link($album->image->url, ['controller' => 'Images', 'action' => 'view', $album->image->id]) : '' ?></td>
+                    <td> <img style="width: 25rem;" src="<?= h($album->image->url) ?>" alt="Album Cover"> </td>
                 </tr>
                 <tr>
                     <th><?= __('Spotify Id') ?></th>
                     <td>
-                        <iframe style="border-radius:12px" src="https://open.spotify.com/embed/album/<?= h($album->spotify_id) ?>?utm_source=generator" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                        <iframe style="border-radius:12px;" src="https://open.spotify.com/embed/album/<?= h($album->spotify_id) ?>?utm_source=generator" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
                     </td>
                 </tr>
                 <tr>

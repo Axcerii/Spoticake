@@ -24,7 +24,7 @@
                 <legend><?= __('Edit Album') ?></legend>
                 <?php
                     echo $this->Form->control('title');
-                    echo $this->Form->control('spotify_id');
+                    echo $this->Form->control('spotify_id', ['type' => 'text']);
                     echo $this->Form->control('published');
                     echo $this->Form->control('artist_id', ['options' => $artists]);
                     echo $this->Form->control('genre');

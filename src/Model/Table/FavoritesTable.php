@@ -51,6 +51,18 @@ class FavoritesTable extends Table
             'foreignKey' => 'user_id',
             'joinType' => 'INNER',
         ]);
+
+        $this->belongsTo('Albums', [
+            'foreignKey' => 'post_id',
+            'joinType' => 'LEFT',
+            'conditions' => ['Favorites.entity_type' => 'album']
+        ]);
+    
+        $this->belongsTo('Artists', [
+            'foreignKey' => 'post_id',
+            'joinType' => 'LEFT',
+            'conditions' => ['Favorites.entity_type' => 'artist']
+        ]);
     }
 
     /**

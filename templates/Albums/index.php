@@ -7,57 +7,60 @@
 <div class="albums index content">
     <?= $this->Html->link(__('New Album'), ['action' => 'add'], ['class' => 'button float-right']) ?>
     <h3><?= __('Albums') ?></h3>
-    <div class="table-responsive">
-        <table>
-            <thead>
-                <tr>
-                    <th><?= $this->Paginator->sort('id') ?></th>
-                    <th><?= $this->Paginator->sort('title') ?></th>
-                    <th><?= $this->Paginator->sort('published') ?></th>
-                    <th><?= $this->Paginator->sort('genre') ?></th>
-                    <th><?= $this->Paginator->sort('image_id') ?></th>
-                    <th><?= $this->Paginator->sort('visibility') ?></th>
-                    <th><?= $this->Paginator->sort('created') ?></th>
-                    <th><?= $this->Paginator->sort('modified') ?></th>
-                    <th class="actions"><?= __('Actions') ?></th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($albums as $album): ?>
-                <tr>
-                    <td><?= $this->Number->format($album->id) ?></td>
-                    <td><?= h($album->title) ?></td>
-                    <td><?= h($album->published) ?></td>
-                    <td><?= h($album->genre) ?></td>
-                    <td><?= $album->hasValue('image') ? $this->Html->link($album->image->url, ['controller' => 'Images', 'action' => 'view', $album->image->id]) : '' ?></td>
-                    <td><?= h($album->visibility) ?></td>
-                    <td><?= h($album->created) ?></td>
-                    <td><?= h($album->modified) ?></td>
-                    <td class="actions">
-                        <?= $this->Html->link(__('View'), ['action' => 'view', $album->id]) ?>
-                        <?= $this->Html->link(__('Edit'), ['action' => 'edit', $album->id]) ?>
-                        <?= $this->Form->postLink(
-                            __('Delete'),
-                            ['action' => 'delete', $album->id],
-                            [
-                                'method' => 'delete',
-                                'confirm' => __('Are you sure you want to delete # {0}?', $album->id),
-                            ]
-                        ) ?>
-                    </td>
-                </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-    </div>
-    <div class="paginator">
-        <ul class="pagination">
-            <?= $this->Paginator->first('<< ' . __('first')) ?>
-            <?= $this->Paginator->prev('< ' . __('previous')) ?>
-            <?= $this->Paginator->numbers() ?>
-            <?= $this->Paginator->next(__('next') . ' >') ?>
-            <?= $this->Paginator->last(__('last') . ' >>') ?>
-        </ul>
-        <p><?= $this->Paginator->counter(__('Page {{page}} of {{pages}}, showing {{current}} record(s) out of {{count}} total')) ?></p>
+    <div class="card-container">
+        <?php printCards($albums); ?>
     </div>
 </div>
+
+<style>
+    .card-container{
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 2rem;
+
+        & .card{
+            padding: 1rem;
+            border-radius: 1rem;
+
+            &:hover{
+                background-color: lightgrey;
+                cursor: pointer;
+            }
+        }
+    }
+</style>
+
+<?php
+
+function printCards($albums){
+    foreach($albums as $albums){
+
+        if($albums->image->url == null){
+            $tempSrc = "https://placehold.co/400";
+        }
+        else{
+            $tempSrc = $albums->image->url;
+        }
+
+        if($albums->artist->name == null){
+            $tempArtist = "Inconnu";
+        }
+        else{
+            $tempArtist = $albums->artist->name;
+        }
+
+        echo "
+            <div class=\"card\" style=\"width: 18rem;\" onclick=\"location.href='albums/view/{$albums->id}'\">
+                <img src=\"{$tempSrc}\" class=\"card-img-top\" alt=\"...\">
+                <div class=\"card-body\">
+                    <h5 class=\"card-title\">{$albums->title}</h5>
+                    <p class=\"card-artist\">{$tempArtist}</p>
+                    <a href=\"albums/view/{$albums->id}\" class=\"btn btn-primary\">Voir</a>
+                </div>
+            </div>
+        ";
+    }
+}
+
+?>

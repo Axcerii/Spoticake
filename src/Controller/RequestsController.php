@@ -50,6 +50,12 @@ class RequestsController extends AppController
         $request = $this->Requests->newEmptyEntity();
         if ($this->request->is('post')) {
             $request = $this->Requests->patchEntity($request, $this->request->getData());
+
+            $user = $this->Authentication->getIdentity();
+            if ($user) {
+                $request->user_id = $user->id;
+            }
+
             $request->state = false;
             if ($this->Requests->save($request)) {
                 $this->Flash->success(__('The request has been saved.'));

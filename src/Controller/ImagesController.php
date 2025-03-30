@@ -34,6 +34,8 @@ class ImagesController extends AppController
     {
         $image = $this->Images->get($id, contain: ['Albums', 'Artists']);
         $this->set(compact('image'));
+
+        $this->Authorization->authorize($image);
     }
 
     /**
@@ -44,6 +46,9 @@ class ImagesController extends AppController
     public function add()
     {
         $image = $this->Images->newEmptyEntity();
+
+        $this->Authorization->authorize($image);
+
         if ($this->request->is('post')) {
             $image = $this->Images->patchEntity($image, $this->request->getData());
             if ($this->Images->save($image)) {
@@ -66,6 +71,9 @@ class ImagesController extends AppController
     public function edit($id = null)
     {
         $image = $this->Images->get($id, contain: []);
+
+        $this->Authorization->authorize($image);
+
         if ($this->request->is(['patch', 'post', 'put'])) {
             $image = $this->Images->patchEntity($image, $this->request->getData());
             if ($this->Images->save($image)) {
@@ -89,6 +97,9 @@ class ImagesController extends AppController
     {
         $this->request->allowMethod(['post', 'delete']);
         $image = $this->Images->get($id);
+
+        $this->Authorization->authorize($image);
+
         if ($this->Images->delete($image)) {
             $this->Flash->success(__('The image has been deleted.'));
         } else {
@@ -102,10 +113,8 @@ class ImagesController extends AppController
     {
         parent::beforeFilter($event);
         
-        // Permet aux utilisateurs non connectés d’accéder à certaines actions
-        $this->Authentication->allowUnauthenticated(['login', 'register']);
 
         // Charge l’utilisateur authentifié pour l’Authorization
-        $this->Authorization->authorizeModel($this->Users);
+        $this->Authorization->skipAuthorization();
     }
 }

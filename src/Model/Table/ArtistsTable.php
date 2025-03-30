@@ -56,6 +56,14 @@ class ArtistsTable extends Table
         $this->hasMany('Albums', [
             'foreignKey' => 'artist_id',
         ]);
+
+        $this->hasMany('Requests', [
+            'foreignKey' => 'type'
+        ]);
+
+        $this->hasMany('Favorites', [
+            'foreignKey' => 'post_id',
+        ]);
     }
 
     /**

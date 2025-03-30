@@ -58,9 +58,18 @@ class AlbumsTable extends Table
             'foreignKey' => 'album_id',
         ]);
 
+        $this->hasMany('Requests', [
+            'foreignKey' => 'artist_id', // Assure-toi que la clé étrangère est correcte
+        ]);
+
         $this->belongsTo('Artists', [
             'foreignKey' => 'artist_id',
             'joinType' => 'INNER', // Modifiable selon ton besoin
+        ]);
+
+        $this->hasMany('Favorites', [
+            'foreignKey' => 'post_id',
+
         ]);
     }
 

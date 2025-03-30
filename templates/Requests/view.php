@@ -32,7 +32,12 @@
                 </tr>
                 <tr>
                     <th><?= __('State') ?></th>
-                    <td><?= h($request->state) ?></td>
+                    <td><?php if(h($request->state)){
+                        echo '<span style="color:lime;"> Validée ! </span>';
+                    }
+                    else{
+                        echo '<span style="color:red;"> En attente </span>';
+                    } ?></td>
                 </tr>
                 <tr>
                     <th><?= __('Id') ?></th>

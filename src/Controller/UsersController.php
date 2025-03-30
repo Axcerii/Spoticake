@@ -134,7 +134,7 @@ class UsersController extends AppController
 
     if ($result->isValid()) {
         $this->Flash->success(__('Login successful'));
-        $redirect = $this->Authentication->getLoginRedirect();
+        $redirect = $this->request->getQuery('redirect', ['controller' => 'Albums', 'action' => 'index']);
         return $redirect ? $this->redirect($redirect) : null;
     }
 

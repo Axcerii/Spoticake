@@ -34,10 +34,23 @@ class ArtistsController extends AppController
      */
     public function view($id = null)
     {
-        $artist = $this->Artists->get($id, contain: ['Requests']);
-        $this->set(compact('artist'));
-    }
+        $artist = $this->Artists->get($id, contain: ['Requests', 'Images', 'Albums']);
 
+        $user = $this->Authentication->getIdentity();
+        $liked = false;
+
+        if ($user) {
+            $favoritesTable = $this->fetchTable('Favorites');
+            $liked = $favoritesTable->exists([
+                'user_id' => $user->id,
+                'post_id' => $artist->id,
+                'entity_type' => 'artist'
+            ]);
+        }
+
+        $this->set(compact('artist', 'liked'));
+    }
+    
     /**
      * Add method
      *

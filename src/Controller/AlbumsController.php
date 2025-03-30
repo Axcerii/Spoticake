@@ -17,13 +17,50 @@ class AlbumsController extends AppController
      */
     public function index()
     {
-        $query = $this->Albums->find();
+        $query = $this->Albums->find()
+        ->contain(['Artists', 'Images']);
+
         $albums = $this->paginate($query);
+
+        $topAlbums = $this->getTopAlbums();
+        $topArtists = $this->getTopArtists();
 
         $this->Authorization->skipAuthorization();
 
-        $this->set(compact('albums'));
+        $this->set(compact('albums', 'topAlbums', 'topArtists'));
     }
+
+    public function getTopAlbums()
+    {
+        return $this->fetchTable('Favorites')
+            ->find()
+            ->select([
+                'Favorites.post_id',
+                'likes' => $this->fetchTable('Favorites')->find()->func()->count('Favorites.id')
+            ])
+            ->where(['Favorites.entity_type' => 'album'])
+            ->group('Favorites.post_id')
+            ->order(['likes' => 'DESC'])
+            ->limit(5)
+            ->contain(['Albums']); // Ajout pour récupérer les infos de l'album
+    }
+
+    public function getTopArtists()
+    {
+        return $this->fetchTable('Favorites')
+            ->find()
+            ->select([
+                'post_id',
+                'likes' => $this->fetchTable('Favorites')->find()->func()->count('Favorites.id')
+            ])
+            ->where(['entity_type' => 'artist'])
+            ->group('post_id')
+            ->order(['likes' => 'DESC'])
+            ->limit(5)
+            ->contain(['Artists']) // Maintenant que l'association est définie
+            ->all();
+    }
+
 
     /**
      * View method
@@ -34,9 +71,9 @@ class AlbumsController extends AppController
      */
     public function view($id = null)
     {
-        $album = $this->Albums->get($id, [
-            'contain' => ['Musics'],
-        ]);
+         $album = $this->Albums->get($id, [
+        'contain' => ['Artists', 'Images', 'Musics'],
+    ]);
 
         $user = $this->Authentication->getIdentity();
         $liked = false;

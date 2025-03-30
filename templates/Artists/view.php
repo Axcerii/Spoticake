@@ -23,6 +23,18 @@
                     <td><?= h($artist->name) ?></td>
                 </tr>
                 <tr>
+                    <th> Favourites </th>
+                        <td>
+                        <?= $this->Html->link(
+                                $liked ? '❤️ Unlike' : '🤍 Like',
+                                ['controller' => 'Favorites', 'action' => 'toggle', $artist->id, 'artist'],
+                                ['class' => 'btn btn-sm ' . ($liked ? 'btn-danger' : 'btn-outline-danger')]
+                            ); 
+                        ?>
+                        </td>
+                    </th>
+                </tr>   
+                <tr>
                     <th><?= __('Twitter') ?></th>
                     <td><?= h($artist->twitter) ?></td>
                 </tr>

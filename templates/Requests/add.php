@@ -20,7 +20,7 @@
             <fieldset>
                 <legend><?= __('Add Request') ?></legend>
                 <?php
-                    echo $this->Form->control('user_id', ['options' => $users]);
+                    //echo $this->Form->control('user_id', ['options' => $users]);
                     echo $this->Form->control('type', ['options' => ['artist' => 'artist', 'album' => 'album']]);
                     echo $this->Form->control('description');
                 ?>
