@@ -35,6 +35,8 @@ class FavoritesController extends AppController
     {
         $favorite = $this->Favorites->get($id, contain: ['Users']);
         $this->set(compact('favorite'));
+
+        $this->Authorization->authorize($favorite);
     }
 
     /**
@@ -45,6 +47,9 @@ class FavoritesController extends AppController
     public function add()
     {
         $favorite = $this->Favorites->newEmptyEntity();
+
+        $this->Authorization->authorize($favorite);
+
         if ($this->request->is('post')) {
             $favorite = $this->Favorites->patchEntity($favorite, $this->request->getData());
             if ($this->Favorites->save($favorite)) {
@@ -68,6 +73,9 @@ class FavoritesController extends AppController
     public function edit($id = null)
     {
         $favorite = $this->Favorites->get($id, contain: []);
+
+        $this->Authorization->authorize($favorite);
+
         if ($this->request->is(['patch', 'post', 'put'])) {
             $favorite = $this->Favorites->patchEntity($favorite, $this->request->getData());
             if ($this->Favorites->save($favorite)) {
@@ -92,6 +100,9 @@ class FavoritesController extends AppController
     {
         $this->request->allowMethod(['post', 'delete']);
         $favorite = $this->Favorites->get($id);
+
+        $this->Authorization->authorize($favorite);
+
         if ($this->Favorites->delete($favorite)) {
             $this->Flash->success(__('The favorite has been deleted.'));
         } else {
@@ -101,14 +112,51 @@ class FavoritesController extends AppController
         return $this->redirect(['action' => 'index']);
     }
 
+    public function toggle($entityId, $entityType)
+    {
+        $user = $this->Authentication->getIdentity();
+
+        if (!$user) {
+            $this->Flash->error(__('Vous devez être connecté pour liker.'));
+            return $this->redirect($this->request->referer());
+        }
+
+        if (!in_array($entityType, ['album', 'artist'])) {
+            $this->Flash->error(__('Type invalide.'));
+            return $this->redirect($this->request->referer());
+        }
+
+        $favouritesTable = $this->fetchTable('Favorites');
+
+        $favorite = $this->Favorites->find()
+            ->where([
+                'user_id' => $user->id,
+                'post_id' => $entityId,
+                'entity_type' => $entityType
+            ])
+            ->first();
+
+        if ($favorite) {
+            $this->Favorites->delete($favorite);
+            $this->Flash->success(__('Vous n\'aimez plus cet ' . ($entityType === 'album' ? 'album' : 'artiste') . '.'));
+        } else {
+            $favorite = $this->Favorites->newEntity([
+                'user_id' => $user->id,
+                'post_id' => $entityId,
+                'entity_type' => $entityType
+            ]);
+            $this->Favorites->save($favorite);
+            $this->Flash->success(__('Vous aimez cet ' . ($entityType === 'album' ? 'album' : 'artiste') . ' !'));
+        }
+
+        return $this->redirect($this->request->referer());
+    }
+
     public function beforeFilter(\Cake\Event\EventInterface $event)
     {
         parent::beforeFilter($event);
         
-        // Permet aux utilisateurs non connectés d’accéder à certaines actions
-        $this->Authentication->allowUnauthenticated(['login', 'register']);
 
-        // Charge l’utilisateur authentifié pour l’Authorization
-        $this->Authorization->authorizeModel($this->Users);
+        $this->Authorization->skipAuthorization();
     }
 }

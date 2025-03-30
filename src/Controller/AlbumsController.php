@@ -34,9 +34,23 @@ class AlbumsController extends AppController
      */
     public function view($id = null)
     {
-        $album = $this->Albums->get($id, contain: ['Musics']);
-        $user = $this->request->getAttribute('identity');
-        $this->set(compact('album'));
+        $album = $this->Albums->get($id, [
+            'contain' => ['Musics'],
+        ]);
+
+        $user = $this->Authentication->getIdentity();
+        $liked = false;
+
+        if ($user) {
+            $favoritesTable = $this->fetchTable('Favorites');
+            $liked = $favoritesTable->exists([
+                'user_id' => $user->id,
+                'post_id' => $album->id,
+                'entity_type' => 'album'
+            ]);
+        }
+
+        $this->set(compact('album', 'liked'));
     }
 
     /**

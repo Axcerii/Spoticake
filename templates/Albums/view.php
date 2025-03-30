@@ -49,6 +49,18 @@
                     <td><?= h($album->published) ?></td>
                 </tr>
                 <tr>
+                    <th> Favourites </th>
+                        <td>
+                        <?= $this->Html->link(
+                                $liked ? '❤️ Unlike' : '🤍 Like',
+                                ['controller' => 'Favorites', 'action' => 'toggle', $album->id, 'album'],
+                                ['class' => 'btn btn-sm ' . ($liked ? 'btn-danger' : 'btn-outline-danger')]
+                            ); 
+                        ?>
+                        </td>
+                    </th>
+                </tr>
+                <tr>
                     <th><?= __('Created') ?></th>
                     <td><?= h($album->created) ?></td>
                 </tr>
